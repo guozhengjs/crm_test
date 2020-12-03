@@ -19,6 +19,49 @@
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript">
+        $(function(){
+            //清空
+            $("loginAct").val("")
+            //页面加载完毕后，用户文本框自动获得焦点
+            $("#loginAct").focus();
+            //为登录按钮绑定事件，执行登录操作
+            $("#submitBtn").click(function(){
+                login();
+            })
+            //为当前登录窗口绑定键盘敲击事件
+            $(window).keydown(function(event){
+                if(event.keyCode==13){
+                    login();
+                }
+            })
+        })
+        function login(){
+            var loginAct = $.trim($("#loginAct").val());
+            var loginPwd = $.trim($("#loginPwd").val());
+            if(loginAct=="" || loginPwd==""){
+                $("#msg").html("账号密码不能为空")
+                return false;
+            }
+            $.ajax({
+                url:"settings/user/login.do",
+                data:{
+                    "loginAct":loginAct,
+                    "loginPwd":loginPwd
+                },
+                type:"post",
+                dataType:"json",
+                success:function(){
+                    if(data.success){
+                        window.location.href="workbench/index.html";
+                    }else{
+                        $("#msg").html(data.msg);
+                    }
+                }
+
+            })
+        }
+    </script>
 </head>
 
 <body>
@@ -37,17 +80,18 @@
         <form action="workbench/index.html" class="form-horizontal" role="form">
             <div class="form-group form-group-lg">
                 <div style="width: 350px;">
-                    <input class="form-control" type="text" placeholder="用户名">
+                    <input class="form-control" type="text" placeholder="用户名" id="loginAct">
                 </div>
                 <div style="width: 350px; position: relative;top: 20px;">
-                    <input class="form-control" type="password" placeholder="密码">
+                    <input class="form-control" type="password" placeholder="密码" id="loginPwd">
                 </div>
                 <div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 
                     <span id="msg"></span>
 
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
+                <%--按钮卸载form表单中，默认的行为就是提交--%>
+                <button type="button" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;" id="submitBtn">登录</button>
             </div>
         </form>
     </div>
